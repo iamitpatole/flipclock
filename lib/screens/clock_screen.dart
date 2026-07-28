@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/clock_provider.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/clock_face.dart';
+import '../widgets/water_reminder_animation.dart';
 import 'settings_screen.dart';
 
 class ClockScreen extends StatelessWidget {
@@ -40,6 +41,30 @@ class ClockScreen extends StatelessWidget {
                   top: 10,
                   right: 10,
                   child: _SettingsButton(themeColor: clockTheme.mutedDigit),
+                ),
+                Positioned.fill(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 350),
+                    reverseDuration: const Duration(milliseconds: 250),
+                    transitionBuilder: (child, animation) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: ScaleTransition(
+                          scale: Tween<double>(begin: 0.9, end: 1.0).animate(
+                            CurvedAnimation(
+                              parent: animation,
+                              curve: Curves.easeOutCubic,
+                              reverseCurve: Curves.easeInCubic,
+                            ),
+                          ),
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: settingsProvider.showWaterAnimation
+                        ? const WaterReminderAnimation()
+                        : const SizedBox.shrink(),
+                  ),
                 ),
               ],
             ),

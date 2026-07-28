@@ -13,6 +13,9 @@ class ClockSettings {
     this.fontScale = 1,
     this.keepScreenAwake = true,
     this.fullscreen = false,
+    this.waterReminderEnabled = false,
+    this.waterReminderIntervalSeconds = 3600, // default 1 hour (3600 seconds)
+    this.nextWaterReminderTimestamp = 0,
   });
 
   final bool use24HourFormat;
@@ -25,6 +28,9 @@ class ClockSettings {
   final double fontScale;
   final bool keepScreenAwake;
   final bool fullscreen;
+  final bool waterReminderEnabled;
+  final int waterReminderIntervalSeconds;
+  final int nextWaterReminderTimestamp;
 
   Color get accentColor => Color(accentColorValue);
 
@@ -39,6 +45,9 @@ class ClockSettings {
     double? fontScale,
     bool? keepScreenAwake,
     bool? fullscreen,
+    bool? waterReminderEnabled,
+    int? waterReminderIntervalSeconds,
+    int? nextWaterReminderTimestamp,
   }) {
     return ClockSettings(
       use24HourFormat: use24HourFormat ?? this.use24HourFormat,
@@ -51,6 +60,11 @@ class ClockSettings {
       fontScale: fontScale ?? this.fontScale,
       keepScreenAwake: keepScreenAwake ?? this.keepScreenAwake,
       fullscreen: fullscreen ?? this.fullscreen,
+      waterReminderEnabled: waterReminderEnabled ?? this.waterReminderEnabled,
+      waterReminderIntervalSeconds:
+          waterReminderIntervalSeconds ?? this.waterReminderIntervalSeconds,
+      nextWaterReminderTimestamp:
+          nextWaterReminderTimestamp ?? this.nextWaterReminderTimestamp,
     );
   }
 }

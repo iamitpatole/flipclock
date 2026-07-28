@@ -140,6 +140,54 @@ class SettingsScreen extends StatelessWidget {
               ),
             ],
           ),
+          SettingsSection(
+            title: 'Water Reminder',
+            children: [
+              SettingsSwitchTile(
+                icon: Icons.water_drop_outlined,
+                title: 'Water reminder',
+                subtitle: 'Get reminded to drink water at regular intervals.',
+                value: settings.waterReminderEnabled,
+                onChanged: provider.setWaterReminderEnabled,
+              ),
+              if (settings.waterReminderEnabled) ...[
+                ListTile(
+                  leading: const Icon(Icons.av_timer_outlined),
+                  title: const Text('Reminder interval'),
+                  subtitle: const Text('How often to show the reminder.'),
+                  trailing: DropdownButton<int>(
+                    value: [3600, 7200, 10800, 14400]
+                            .contains(settings.waterReminderIntervalSeconds)
+                        ? settings.waterReminderIntervalSeconds
+                        : 3600,
+                    onChanged: (value) {
+                      if (value != null) {
+                        provider.setWaterReminderIntervalSeconds(value);
+                      }
+                    },
+                    items: const [
+                      DropdownMenuItem(
+                        value: 3600,
+                        child: Text('1 hour'),
+                      ),
+                      DropdownMenuItem(
+                        value: 7200,
+                        child: Text('2 hours'),
+                      ),
+                      DropdownMenuItem(
+                        value: 10800,
+                        child: Text('3 hours'),
+                      ),
+                      DropdownMenuItem(
+                        value: 14400,
+                        child: Text('4 hours'),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
         ],
       ),
     );

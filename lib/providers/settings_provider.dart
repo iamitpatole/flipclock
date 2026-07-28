@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 import '../models/clock_settings.dart';
@@ -21,6 +22,12 @@ class SettingsProvider extends ChangeNotifier {
   bool get isLoaded => _isLoaded;
   ClockTheme get clockTheme => ClockThemes.byId(_settings.themeId);
 
+  Timer? _waterReminderTimer;
+  Timer? _animationHideTimer;
+  bool _showWaterAnimation = false;
+
+  bool get showWaterAnimation => _showWaterAnimation;
+
   Future<void> _load() async {
     _settings = await _settingsService.load();
     _isLoaded = true;
@@ -28,11 +35,77 @@ class SettingsProvider extends ChangeNotifier {
       keepScreenAwake: _settings.keepScreenAwake,
       fullscreen: _settings.fullscreen,
     );
+    _startWaterReminderTimer();
     notifyListeners();
+  }
+
+  void _startWaterReminderTimer() {
+    _waterReminderTimer?.cancel();
+    _waterReminderTimer = null;
+
+    if (!_settings.waterReminderEnabled) return;
+    if (_showWaterAnimation) return; // Don't schedule next reminder while animation is showing
+
+    if (_settings.nextWaterReminderTimestamp == 0) {
+      final nextTimestamp = DateTime.now().millisecondsSinceEpoch +
+          _settings.waterReminderIntervalSeconds * 1000;
+      _settings = _settings.copyWith(nextWaterReminderTimestamp: nextTimestamp);
+      _settingsService.save(_settings);
+    }
+
+    final remaining = _settings.nextWaterReminderTimestamp -
+        DateTime.now().millisecondsSinceEpoch;
+
+    if (remaining <= 0) {
+      // Trigger reminder immediately if the scheduled time has already passed
+      triggerWaterReminder();
+    } else {
+      _waterReminderTimer = Timer(Duration(milliseconds: remaining), () {
+        triggerWaterReminder();
+      });
+    }
+  }
+
+  void triggerWaterReminder() {
+    _animationHideTimer?.cancel();
+    _showWaterAnimation = true;
+    notifyListeners();
+
+    // Auto-hide the animation after 10 seconds
+    _animationHideTimer = Timer(const Duration(seconds: 10), () {
+      dismissWaterReminder();
+    });
+  }
+
+  void triggerDemoWaterReminder() {
+    _animationHideTimer?.cancel();
+    _showWaterAnimation = true;
+    notifyListeners();
+
+    _animationHideTimer = Timer(const Duration(seconds: 10), () {
+      _showWaterAnimation = false;
+      notifyListeners();
+    });
+  }
+
+  void dismissWaterReminder() {
+    _animationHideTimer?.cancel();
+    _showWaterAnimation = false;
+    notifyListeners();
+
+    if (_settings.waterReminderEnabled) {
+      final nextTimestamp = DateTime.now().millisecondsSinceEpoch +
+          _settings.waterReminderIntervalSeconds * 1000;
+      _settings = _settings.copyWith(nextWaterReminderTimestamp: nextTimestamp);
+      _settingsService.save(_settings);
+
+      _startWaterReminderTimer();
+    }
   }
 
   Future<void> update(ClockSettings settings) async {
     _settings = settings;
+    _startWaterReminderTimer();
     notifyListeners();
     await Future.wait([
       _settingsService.save(settings),
@@ -72,4 +145,36 @@ class SettingsProvider extends ChangeNotifier {
 
   Future<void> setFullscreen(bool value) =>
       update(_settings.copyWith(fullscreen: value));
+
+  Future<void> setWaterReminderEnabled(bool value) {
+    if (!value) {
+      _showWaterAnimation = false;
+      _animationHideTimer?.cancel();
+    }
+    final nextTimestamp = value
+        ? DateTime.now().millisecondsSinceEpoch +
+            _settings.waterReminderIntervalSeconds * 1000
+        : 0;
+    return update(_settings.copyWith(
+      waterReminderEnabled: value,
+      nextWaterReminderTimestamp: nextTimestamp,
+    ));
+  }
+
+  Future<void> setWaterReminderIntervalSeconds(int value) {
+    final nextTimestamp = _settings.waterReminderEnabled
+        ? DateTime.now().millisecondsSinceEpoch + value * 1000
+        : 0;
+    return update(_settings.copyWith(
+      waterReminderIntervalSeconds: value,
+      nextWaterReminderTimestamp: nextTimestamp,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _waterReminderTimer?.cancel();
+    _animationHideTimer?.cancel();
+    super.dispose();
+  }
 }

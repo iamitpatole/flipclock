@@ -13,6 +13,9 @@ class SettingsService {
   static const _fontScale = 'fontScale';
   static const _keepScreenAwake = 'keepScreenAwake';
   static const _fullscreen = 'fullscreen';
+  static const _waterReminderEnabled = 'waterReminderEnabled';
+  static const _waterReminderIntervalSeconds = 'waterReminderIntervalSeconds';
+  static const _nextWaterReminderTimestamp = 'nextWaterReminderTimestamp';
 
   Future<ClockSettings> load() async {
     final preferences = await SharedPreferences.getInstance();
@@ -27,6 +30,12 @@ class SettingsService {
       fontScale: preferences.getDouble(_fontScale) ?? 1,
       keepScreenAwake: preferences.getBool(_keepScreenAwake) ?? true,
       fullscreen: preferences.getBool(_fullscreen) ?? false,
+      waterReminderEnabled:
+          preferences.getBool(_waterReminderEnabled) ?? false,
+      waterReminderIntervalSeconds:
+          preferences.getInt(_waterReminderIntervalSeconds) ?? 3600,
+      nextWaterReminderTimestamp:
+          preferences.getInt(_nextWaterReminderTimestamp) ?? 0,
     );
   }
 
@@ -43,6 +52,11 @@ class SettingsService {
       preferences.setDouble(_fontScale, settings.fontScale),
       preferences.setBool(_keepScreenAwake, settings.keepScreenAwake),
       preferences.setBool(_fullscreen, settings.fullscreen),
+      preferences.setBool(_waterReminderEnabled, settings.waterReminderEnabled),
+      preferences.setInt(_waterReminderIntervalSeconds,
+          settings.waterReminderIntervalSeconds),
+      preferences.setInt(_nextWaterReminderTimestamp,
+          settings.nextWaterReminderTimestamp),
     ]);
   }
 }
