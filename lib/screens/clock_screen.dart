@@ -5,6 +5,7 @@ import '../providers/clock_provider.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/clock_face.dart';
 import '../widgets/water_reminder_animation.dart';
+import '../widgets/battery_indicator.dart';
 import 'settings_screen.dart';
 
 class ClockScreen extends StatelessWidget {
@@ -37,10 +38,28 @@ class ClockScreen extends StatelessWidget {
                     theme: clockTheme,
                   ),
                 ),
+                if (settings.showBattery)
+                  Positioned(
+                    top: 10,
+                    left: 16,
+                    child: BatteryIndicator(theme: clockTheme),
+                  ),
                 Positioned(
                   top: 10,
                   right: 10,
-                  child: _SettingsButton(themeColor: clockTheme.mutedDigit),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _FullscreenButton(
+                        themeColor: clockTheme.mutedDigit,
+                        isFullscreen: settings.fullscreen,
+                        onPressed: () =>
+                            settingsProvider.setFullscreen(!settings.fullscreen),
+                      ),
+                      const SizedBox(width: 8),
+                      _SettingsButton(themeColor: clockTheme.mutedDigit),
+                    ],
+                  ),
                 ),
                 Positioned.fill(
                   child: AnimatedSwitcher(
@@ -91,6 +110,32 @@ class _SettingsButton extends StatelessWidget {
           );
         },
         icon: Icon(Icons.tune, color: themeColor),
+      ),
+    );
+  }
+}
+
+class _FullscreenButton extends StatelessWidget {
+  const _FullscreenButton({
+    required this.themeColor,
+    required this.isFullscreen,
+    required this.onPressed,
+  });
+
+  final Color themeColor;
+  final bool isFullscreen;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen',
+      child: IconButton.filledTonal(
+        onPressed: onPressed,
+        icon: Icon(
+          isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen,
+          color: themeColor,
+        ),
       ),
     );
   }

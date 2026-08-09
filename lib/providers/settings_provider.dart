@@ -128,6 +128,9 @@ class SettingsProvider extends ChangeNotifier {
   Future<void> setShowWeekday(bool value) =>
       update(_settings.copyWith(showWeekday: value));
 
+  Future<void> setShowBattery(bool value) =>
+      update(_settings.copyWith(showBattery: value));
+
   Future<void> setThemeId(String value) =>
       update(_settings.copyWith(themeId: value));
 

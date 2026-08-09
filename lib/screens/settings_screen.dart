@@ -58,6 +58,13 @@ class SettingsScreen extends StatelessWidget {
                 value: settings.showWeekday,
                 onChanged: provider.setShowWeekday,
               ),
+              SettingsSwitchTile(
+                icon: Icons.battery_charging_full_outlined,
+                title: 'Show battery',
+                subtitle: 'Display battery percentage and charging state.',
+                value: settings.showBattery,
+                onChanged: provider.setShowBattery,
+              ),
             ],
           ),
           SettingsSection(

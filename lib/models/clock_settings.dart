@@ -7,6 +7,7 @@ class ClockSettings {
     this.showSeconds = true,
     this.showDate = true,
     this.showWeekday = true,
+    this.showBattery = false,
     this.themeId = 'classic_black',
     this.accentColorValue = 0xFF38BDF8,
     this.animationSpeed = 1,
@@ -22,6 +23,7 @@ class ClockSettings {
   final bool showSeconds;
   final bool showDate;
   final bool showWeekday;
+  final bool showBattery;
   final String themeId;
   final int accentColorValue;
   final double animationSpeed;
@@ -39,6 +41,7 @@ class ClockSettings {
     bool? showSeconds,
     bool? showDate,
     bool? showWeekday,
+    bool? showBattery,
     String? themeId,
     int? accentColorValue,
     double? animationSpeed,
@@ -54,6 +57,7 @@ class ClockSettings {
       showSeconds: showSeconds ?? this.showSeconds,
       showDate: showDate ?? this.showDate,
       showWeekday: showWeekday ?? this.showWeekday,
+      showBattery: showBattery ?? this.showBattery,
       themeId: themeId ?? this.themeId,
       accentColorValue: accentColorValue ?? this.accentColorValue,
       animationSpeed: animationSpeed ?? this.animationSpeed,

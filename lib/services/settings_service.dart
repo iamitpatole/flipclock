@@ -7,6 +7,7 @@ class SettingsService {
   static const _showSeconds = 'showSeconds';
   static const _showDate = 'showDate';
   static const _showWeekday = 'showWeekday';
+  static const _showBattery = 'showBattery';
   static const _themeId = 'themeId';
   static const _accentColorValue = 'accentColorValue';
   static const _animationSpeed = 'animationSpeed';
@@ -24,6 +25,7 @@ class SettingsService {
       showSeconds: preferences.getBool(_showSeconds) ?? true,
       showDate: preferences.getBool(_showDate) ?? true,
       showWeekday: preferences.getBool(_showWeekday) ?? true,
+      showBattery: preferences.getBool(_showBattery) ?? false,
       themeId: preferences.getString(_themeId) ?? 'classic_black',
       accentColorValue: preferences.getInt(_accentColorValue) ?? 0xFF38BDF8,
       animationSpeed: preferences.getDouble(_animationSpeed) ?? 1,
@@ -46,6 +48,7 @@ class SettingsService {
       preferences.setBool(_showSeconds, settings.showSeconds),
       preferences.setBool(_showDate, settings.showDate),
       preferences.setBool(_showWeekday, settings.showWeekday),
+      preferences.setBool(_showBattery, settings.showBattery),
       preferences.setString(_themeId, settings.themeId),
       preferences.setInt(_accentColorValue, settings.accentColorValue),
       preferences.setDouble(_animationSpeed, settings.animationSpeed),
