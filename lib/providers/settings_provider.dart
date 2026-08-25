@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import '../models/clock_settings.dart';
 import '../models/clock_theme.dart';
 import '../services/screen_service.dart';
+import '../services/rating_service.dart';
 import '../services/settings_service.dart';
 import '../theme/clock_themes.dart';
 
@@ -29,6 +30,7 @@ class SettingsProvider extends ChangeNotifier {
   bool get showWaterAnimation => _showWaterAnimation;
 
   Future<void> _load() async {
+    await RatingService().trackLaunch();
     _settings = await _settingsService.load();
     _isLoaded = true;
     await _screenService.apply(

@@ -3,13 +3,41 @@ import 'package:provider/provider.dart';
 
 import '../providers/clock_provider.dart';
 import '../providers/settings_provider.dart';
+import '../services/rating_service.dart';
 import '../widgets/clock_face.dart';
 import '../widgets/water_reminder_animation.dart';
 import '../widgets/battery_indicator.dart';
+import '../widgets/rating_dialog.dart';
 import 'settings_screen.dart';
 
-class ClockScreen extends StatelessWidget {
+class ClockScreen extends StatefulWidget {
   const ClockScreen({super.key});
+
+  @override
+  State<ClockScreen> createState() => _ClockScreenState();
+}
+
+class _ClockScreenState extends State<ClockScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkRatingEligibility();
+    });
+  }
+
+  Future<void> _checkRatingEligibility() async {
+    final ratingService = RatingService();
+    if (await ratingService.shouldShowRating()) {
+      if (mounted) {
+        showDialog<void>(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const RatingDialog(),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
