@@ -209,7 +209,7 @@ packages:
     source: hosted
     version: "2.0.12"
   in_app_review_platform_interface:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: in_app_review_platform_interface
       sha256: fed2c755f2125caa9ae10495a3c163aa7fab5af3585a9c62ef4a6920c5b45f10
@@ -321,7 +321,7 @@ packages:
     source: hosted
     version: "2.2.0"
   package_info_plus:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: package_info_plus
       sha256: "468c26b4254ab01979fa5e4a98cb343ea3631b9acee6f21028997419a80e1a20"

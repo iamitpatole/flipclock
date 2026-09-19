@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:in_app_review/in_app_review.dart';
 import '../providers/settings_provider.dart';
+import '../services/app_info_service.dart';
 import '../theme/clock_themes.dart';
 import '../widgets/settings_tile.dart';
 
@@ -163,8 +165,13 @@ class SettingsScreen extends StatelessWidget {
                   title: const Text('Reminder interval'),
                   subtitle: const Text('How often to show the reminder.'),
                   trailing: DropdownButton<int>(
-                    value: [3600, 7200, 10800, 14400]
-                            .contains(settings.waterReminderIntervalSeconds)
+                    value:
+                        [
+                          3600,
+                          7200,
+                          10800,
+                          14400,
+                        ].contains(settings.waterReminderIntervalSeconds)
                         ? settings.waterReminderIntervalSeconds
                         : 3600,
                     onChanged: (value) {
@@ -173,30 +180,72 @@ class SettingsScreen extends StatelessWidget {
                       }
                     },
                     items: const [
-                      DropdownMenuItem(
-                        value: 3600,
-                        child: Text('1 hour'),
-                      ),
-                      DropdownMenuItem(
-                        value: 7200,
-                        child: Text('2 hours'),
-                      ),
-                      DropdownMenuItem(
-                        value: 10800,
-                        child: Text('3 hours'),
-                      ),
-                      DropdownMenuItem(
-                        value: 14400,
-                        child: Text('4 hours'),
-                      ),
+                      DropdownMenuItem(value: 3600, child: Text('1 hour')),
+                      DropdownMenuItem(value: 7200, child: Text('2 hours')),
+                      DropdownMenuItem(value: 10800, child: Text('3 hours')),
+                      DropdownMenuItem(value: 14400, child: Text('4 hours')),
                     ],
                   ),
                 ),
               ],
             ],
           ),
+          SettingsSection(
+            title: 'About',
+            children: [
+              ListTile(
+                leading: const Icon(Icons.star_outline),
+                title: const Text('Rate the app'),
+                subtitle: const Text('Rate us on the Play Store.'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () async {
+                  try {
+                    await InAppReview.instance.openStoreListing(
+                      appStoreId: 'com.bytekeeperlabs.flipClock',
+                    );
+                  } catch (e) {
+                    debugPrint('Error opening store listing: $e');
+                  }
+                },
+              ),
+              const _AppVersionTile(),
+            ],
+          ),
         ],
       ),
+    );
+  }
+}
+
+class _AppVersionTile extends StatefulWidget {
+  const _AppVersionTile();
+
+  @override
+  State<_AppVersionTile> createState() => _AppVersionTileState();
+}
+
+class _AppVersionTileState extends State<_AppVersionTile> {
+  late final Future<String> _versionFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _versionFuture = const AppInfoService().getAppVersion();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<String>(
+      future: _versionFuture,
+      builder: (context, snapshot) {
+        final versionText =
+            snapshot.data ?? (snapshot.hasError ? '1.0.0' : 'Loading...');
+        return ListTile(
+          leading: const Icon(Icons.info_outline),
+          title: const Text('Version'),
+          subtitle: Text(versionText),
+        );
+      },
     );
   }
 }
